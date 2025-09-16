@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Calculator</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #87cefa;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .left-text {
+      border-left-color: #111111;
+      text-size-adjust: 150%;
+      text-decoration-line: black;
+      max-width: 250px;
+      color: #111111;
+      border-color: black;
+    }
+
+    .left-text h2 {
+      font-size: 22px;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .left-text p {
+      text-shadow: black;
+      text-align: right;
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .calculator {
+      width: 320px;
+      border-radius: 20px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dark {
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+    }
+
+    .display {
+      font-size: 2rem;
+      
+      text-align: right;
+       padding: 100px 10px 20px 10px; /* Reduced right padding to 10px, matching other sides */
+
+      margin-bottom: 20px;
+      
+      background: rgba(255, 255, 255, 0.1);
+      overflow-x: auto;
+      min-height: 60px; /* Ensure enough space for multiple lines */
+      /* Removed white-space: nowrap to allow line breaks */
+    }
+
+    .buttons {
+      display: grid;  
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    button {
+      padding: 20px;
+      border: none;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      color: #1b2d61;
+      cursor: pointer;
+      transition: 0.2s;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(5px);
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .operator {
+      background: #1a73e8;
+      color: white;
+    }
+
+    .equal {
+      grid-column: 5 / 4; 
+      grid-row: 6 / 4;
+      background: #1a73e8;
+      color: white;
+    }
+
+    button[onclick="appendValue('.')"] {
+      grid-column: 3 / 3; 
+      grid-row: 5 / 5; 
+      color: white; 
+    }
+
+    button[onclick="appendValue('0')"] {
+      grid-row: 5 / 5;
+      grid-column: 3 / 1; 
+    }
+
+    .minus {
+      background: #1a73e8;
+    }
+    button[onclick="appendValue('*')"] {
+      background: #1a73e8;
+    }
+    button[onclick="appendValue('/')"] {
+      background: #1a73e8;
+    }
+
+    .theme-toggle {
+      margin-bottom: 10px;
+      padding: 8px 15px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: #658d67;
+      color: white;
+    }
+
+    .class {
+      justify-content: center;
+      align-items: left;
+    }
+  </style>
+</head>
+<body>
+ 
+
+    <!-- CALCULATOR -->
+    <div class="calculator" id="calc">
+      <button class="theme-toggle" onclick="toggleTheme()">Switch Button</button>
+      <div class="display" id="display">0</div>
+      <div class="buttons">
+        <button onclick="clearDisplay()">AC</button>
+        <button onclick="delChar()">DEL</button>
+        <button onclick="appendValue('/')">/</button>
+        <button onclick="appendValue('*')">×</button>
+
+        <button onclick="appendValue('7')">7</button>
+        <button onclick="appendValue('8')">8</button>
+        <button onclick="appendValue('9')">9</button>
+        <button class="minus" onclick="appendValue('-')">−</button>
+
+        <button onclick="appendValue('4')">4</button>
+        <button onclick="appendValue('5')">5</button>
+        <button onclick="appendValue('6')">6</button>
+        <button class="operator" onclick="appendValue('+')">+</button>
+
+        <button onclick="appendValue('1')">1</button>
+        <button onclick="appendValue('2')">2</button>
+        <button onclick="appendValue('3')">3</button>
+        <button onclick="appendValue('.')">.</button>
+
+        <button onclick="appendValue('0')">0</button>
+        <button class="equal" onclick="calculate()">=</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let display = document.getElementById("display");
+    let isResultDisplayed = false;
+
+    function appendValue(val) {
+      // Check if the last action was a calculation and the new input is a number
+      if (isResultDisplayed && /[0-9]/.test(val)) {
+        display.innerText = val; // Reset display to the new number
+        isResultDisplayed = false;
+      } else {
+        if (display.innerText === "0" && val !== "#") {
+          display.innerText = val;
+        } else {
+          display.innerText += val; // Allow "#" to be appended
+        }
+        isResultDisplayed = false;
+      }
+    }
+
+
+    function clearDisplay() {
+      display.innerText = "0";
+       isResultDisplayed = false;
+    }
+
+    function delChar() {
+      display.innerText = display.innerText.slice(0, -1) || "0";
+       isResultDisplayed = false;
+    }
+
+    function calculate() {
+      try {
+        let expression = display.innerText;
+        let result = eval(expression);
+        display.innerText = `${expression} 
+        = ${result}`; // Expression above, total below
+        isResultDisplayed = true;
+      } catch (e) {
+        display.innerText = "Error";
+        isResultDisplayed = false;
+      }
+
+    }
+
+    function toggleTheme() {
+      document.getElementById("calc").classList.toggle("dark");
+    }
+  </script>
+</body>
+</html>
